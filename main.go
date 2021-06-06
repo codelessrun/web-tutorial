@@ -6,15 +6,9 @@ import (
 )
 
 func main() {
-	http.HandleFunc("/home", func(rw http.ResponseWriter, r *http.Request) {
-		url := r.URL
-		query := url.Query()
-
-		id := query["id"]
-		fmt.Fprintln(rw, id)
-
-		name := query.Get("name")
-		fmt.Fprintln(rw, name)
+	http.HandleFunc("/process", func(rw http.ResponseWriter, r *http.Request) {
+		// r.ParseForm()
+		fmt.Fprintln(rw, r.FormValue("first_name"))
 	})
 
 	http.ListenAndServe(":8080", nil)
