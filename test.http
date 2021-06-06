@@ -1,0 +1,19 @@
+
+###
+
+GET http://localhost:8080/header?id-1 HTTP/1.1
+
+###
+
+GET http://localhost:8080/url?id=111#flag HTTP/1.1
+
+
+### POST TEST
+GET http://localhost:8080/post HTTP/1.1
+content-type: application/json
+
+{
+    "name": "sample",
+    "time": "Wed, 21 Oct 2015 18:27:50 GMT"
+}
+

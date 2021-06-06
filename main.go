@@ -1,46 +1,33 @@
 package main
 
-import "net/http"
-
-type MyHanlder struct{}
-
-func (m *MyHanlder) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
-	rw.Write([]byte("HELLO WORLD"))
-}
-
-type Abouthandler struct{}
-
-func (m *Abouthandler) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
-	rw.Write([]byte("About"))
-}
-
-func welcome(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("welcome"))
-}
+import (
+	"fmt"
+	"net/http"
+)
 
 func main() {
 
-	mh := MyHanlder{}
-	about := Abouthandler{}
-
 	server := http.Server{
-		Addr:    "localhost:8080",
-		Handler: nil, // defaultServeMux
+		Addr: "localhost:8080",
 	}
 
-	http.Handle("/hello", &mh) // 注册到 defaultServeMux
-	http.Handle("/about", &about)
-	http.HandleFunc("/home", func(rw http.ResponseWriter, r *http.Request) {
-		rw.Write([]byte("Home"))
+	http.HandleFunc("/url", func(rw http.ResponseWriter, r *http.Request) {
+		fmt.Fprintln(rw, r.URL.RawQuery)
+		fmt.Fprintln(rw, r.URL.Fragment)
 	})
-	// http.HandleFunc("/welcome", welcome)
-	http.Handle("/welcome", http.HandlerFunc(welcome))
+
+	http.HandleFunc("/header", func(rw http.ResponseWriter, r *http.Request) {
+		fmt.Fprintln(rw, r.Header)
+		fmt.Fprintln(rw, r.Header["Accept-Encoding"])
+		fmt.Fprintln(rw, r.Header.Get("Accept-Encoding"))
+	})
+
+	http.HandleFunc("/post", func(rw http.ResponseWriter, r *http.Request) {
+		length := r.ContentLength
+		body := make([]byte, length)
+		r.Body.Read(body)
+		fmt.Fprintln(rw, string(body))
+	})
 
 	server.ListenAndServe()
-
-	// http.HandleFunc("/", func(rw http.ResponseWriter, r *http.Request) {
-	// 	rw.Write([]byte("Hello World"))
-	// })
-
-	// http.ListenAndServe("localhost:8080", nil)
 }
